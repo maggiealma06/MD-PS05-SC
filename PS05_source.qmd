@@ -1,6 +1,6 @@
 ---
 title: "Problem Set 05: Regression with One Categorical Variable"
-author: "Your Name"
+author: "Maggie Alma"
 date: last-modified
 date-format: "[Last modified on] MMMM DD, YYYY HH:mm:ss zzz"
 format: 
@@ -79,7 +79,10 @@ Create a visual model of these data (a graph) that will allow you to conduct an 
 ::: {.callout-important icon="false" collapse="false" title="Problem 1 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+ggplot(data = hate_crimes, aes(x = hate_crimes, y = trump_support)) +
+  geom_point() +
+  scale_x_log10() +
+  labs(x = "Number of Hate Crimes" , y = "Level of Trump Support", title = "Trump Support Per Number of Hate Crimes")
 
 ```
 :::
@@ -89,7 +92,7 @@ Create a visual model of these data (a graph) that will allow you to conduct an 
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 2 Answers"}
--   Delete this and put your text answer here.
+-   I would expect the relationship to be slightly positive.
 :::
 
 ::: {.callout-note icon="false" title="Problem 3"}
@@ -100,6 +103,9 @@ Create a model that examines the relationship between hate crime rates and the l
 ```{r}
 # Type your code and comments inside the code chunk
 
+hate_mod <- lm(hate_crimes ~ trump_support, data = hate_crimes)
+get_regression_table(hate_mod)
+
 ```
 :::
 
@@ -108,7 +114,7 @@ What does the intercept mean in this regression table?
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 4 Answers"}
--   Delete this and put your text answer here.
+-   The intercept of this data is the mean amount of hate crimes in areas with high trump support.
 :::
 
 ::: {.callout-note icon="false" title="Problem 5"}
@@ -116,11 +122,12 @@ What does the model estimate as the number of hate crimes per 100,000 people in 
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 5 Answers"}
--   Delete this and put your text answer here.
+-   The model estimates 0.46 hate crimes per 100,000 people in states with "low" trump support.
 
 ```{r}
 # Type your code and comments inside the code chunk
-
+hate_crimes_low <- 0.191 + 0.269
+hate_crimes_low
 ```
 :::
 
@@ -131,10 +138,10 @@ Does the model estimate that hate crimes are more frequent in states that show "
 ::: {.callout-important icon="false" collapse="false" title="Problem 6 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+get_regression_table(hate_mod)
 ```
 
--   Delete this and put your text answer here.
+-   The model estimates that states with lower trump support have more frequent hate crimes.
 :::
 
 ::: {.callout-note icon="false" title="Problem 7"}
@@ -144,10 +151,11 @@ How much greater were hate crimes in "medium" Trump-support states compared to "
 ::: {.callout-important icon="false" collapse="false" title="Problem 7 Answers"}
 ```{r, label = "delta"}
 # Type your code and comments inside the code chunk
-
+hate_crimes_medium <- 0.191 + 0.031
+hate_crimes_high <- 0.191
 ```
 
--   Delete this and put your text answer here.
+-   Hate crimes in "medium" trump support states are 0.031 greater per 100,000 than in high trump support states.
 :::
 
 ::: {.callout-note icon="false" title="Problem 8"}
@@ -158,13 +166,15 @@ What are the three possible fitted values $\hat{y}$ for this model? Hint: use th
 ```{r}
 # Type your code and comments inside the code chunk
 
+
+
 ```
 
--   Delete this and put your text answer here.
+-   $\hat{y}_{high} = 0.191$
 
--   Delete this and put your text answer here.
+-   $\hat{y}_{medium} = 0.460$
 
--   Delete this and put your text answer here.
+-   $\hat{y}_{low} = 0.222$
 :::
 
 ::: {.callout-note icon="false" title="Problem 9"}
@@ -178,7 +188,7 @@ group_by(trump_support) |>
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 9 Answers"}
--   Delete this and put your text answer here.
+-   The values are the same as the estimates $\hat{y}$ values
 :::
 
 ## The Regression Equation
@@ -232,14 +242,14 @@ Solve the regression equation for a state in which `trump_support` is "high".
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 10 Answers"}
-Your $LaTeX$ here
+$\hat{y}_{high} = 0.191 + 0.2691111 \times 0 + 0.0314 \times 0$
 
 ```{r}
 # Type your code and comments inside the code chunk
-
+hate_crimes_high
 ```
 
--   Delete this and put your text answer here.
+-   $\hat{y}_{high} = 0.191$
 :::
 
 ::: {.callout-note icon="false" title="Problem 11"}
@@ -252,9 +262,13 @@ Do these results surprise you? (There is no right answer to this question.)
 ```{r}
 # Type your code and comments inside the code chunk
 
+hate_crimes |>
+  arrange(desc(hate_crimes)) |>
+  select(state, hate_crimes, trump_support) 
+
 ```
 
--   Delete this and put your text answer here.
+-   Oregon, Washington, Massachisetts, Minesota, and Maine are the states with the highest rate of hate crimes. The level of trump support in all of these places is low. 
 :::
 
 # Hate Crimes and Unemployment
@@ -272,6 +286,10 @@ Create a visual model of this data (a graph) that will allow you to conduct an "
 ```{r}
 # Type your code and comments inside the code chunk
 
+ggplot(data = hate_crimes, aes(x = unemployment , y = hate_crimes)) +
+  geom_boxplot() +
+  labs(x = "Unemployment Level", y = "Hate Crimes per 100,000", title = "Hate Crimes per 100k per Unemployment Level") 
+
 ```
 :::
 
@@ -283,6 +301,9 @@ Create a model that examines the relationship between hate crime rates and the u
 ```{r}
 # Type your code and comments inside the code chunk
 
+job_mod <- lm(hate_crimes ~ unemployment, data = hate_crimes)
+get_regression_table(job_mod)
+
 ```
 :::
 
@@ -291,7 +312,7 @@ Write out the regression equation for `job_mod`.
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 14 Answers"}
-Write your equation with $LaTeX$ here.
+ $$\hat{y} = 0.289 + 0.031 \times \text{unemployment level}$$
 :::
 
 ::: {.callout-note icon="false" title="Problem 15"}
@@ -299,7 +320,7 @@ Interpret the estimate of the intercept from the table below.
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 15 Answers"}
--   Delete this and put your text answer here.
+-   The intercept represents the mean number of hate crimes per 100,000 for states with high employment.
 :::
 
 ::: {.callout-note icon="false" title="Problem 16"}
@@ -309,10 +330,11 @@ What does the model estimate the number of hate crimes per 100,000 people to be 
 ::: {.callout-important icon="false" collapse="false" title="Problem 16 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+hc_low_unemployment <- 0.289 + 0.031
+hc_low_unemployment
 ```
 
--   Delete this and put your text answer here.
+-   The model estimates 0.32 hate crimes per 100,000 people in states with low unemployment.
 :::
 
 ::: {.callout-note icon="false" title="Problem 17"}
@@ -322,10 +344,15 @@ What are the two possible fitted values $\widehat{y}$ for this model? Why are th
 ::: {.callout-important icon="false" collapse="false" title="Problem 17 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
+job_mod |> 
+  predict(newdata = data.frame(unemployment = c("low", "high"))) 
+
 
 ```
 
--   Delete this and put your text answer here.
+-   $\hat{y}_{low} = 0.320087$
+
+-   $\hat{y}_{high} = 0.288750$
 :::
 
 ::: {.callout-note icon="false" title="Problem 18"}
@@ -336,9 +363,11 @@ Use the `get_regression_points()` function to generate a table showing the fitte
 ```{r}
 # Type your code and comments inside the code chunk
 
+get_regression_points(job_mod)
+
 ```
 
--   Delete this and put your text answer here.
+-   The residuals are calculated by subtracting the values from hate_crimes_hat from hate_crimes
 :::
 
 # Hate Crimes and Household Income
@@ -351,6 +380,9 @@ Create a model that examines the relationship between `hate_crimes` and median h
 ```{r}
 # Type your code and comments inside the code chunk
 
+job_med_mod <- lm(hate_crimes ~ median_house_inc, data = hate_crimes)
+summary(job_med_mod)
+
 ```
 :::
 
@@ -359,7 +391,7 @@ Were there more hate crimes in areas with high or low median household incomes? 
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 20 Answers"}
--   Delete this and put your text answer here.
+-   There are more hate crimes in areas with higher median household incomes. Areas with low median household incomes have 0.16041 less hate crimes per 100,000 people.
 :::
 
 ::: {.callout-note icon="false" title="Problem 21"}
@@ -369,6 +401,8 @@ Show the first six rows of the output created from running the `get_regression_p
 ::: {.callout-important icon="false" collapse="false" title="Problem 21 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
+get_regression_points(job_med_mod) |>
+  head(n=6)
 
 ```
 :::
@@ -383,7 +417,7 @@ Take a look at data for Maine (row 2 of `hate_crimes`). Did the model (`job_med_
 
 ```
 
--   Delete this and put your text answer here.
+-   The model under predicted the hate_crimes level in maine.
 :::
 
 # **EXTRA**
